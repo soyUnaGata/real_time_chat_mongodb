@@ -5,6 +5,9 @@ import { createServer } from "node:http";
 import { Server } from 'socket.io';
 import cors from 'cors';
 import Message from "./models/Message.js";
+import { secret } from "./config.js";
+import User from "./models/User.js";
+import jwt from "jsonwebtoken";
 
 
 const PORT = 5000;
@@ -29,9 +32,9 @@ app.use(cors());
 app.use(allowAnyCORS);
 
 function allowAnyCORS (req, res, next) {
-    for(let { header, value } in corsHeaders){
-        req.header(header, value);
-        res.header(header, value);
+    for(let header in corsHeaders){
+        req.header(header, corsHeaders[header]);
+        res.header(header, corsHeaders[header]);
     }
     next();
 }
@@ -39,37 +42,6 @@ function allowAnyCORS (req, res, next) {
 mongoose.connect(DB_URL, {useUnifiedTopology: true, useNewUrlParser: true}).then(() => {
     console.log('connected')
 }).catch(err => console.log(err))
-
-io.on('connection', (socket) => {
-
-    socket.on('send-chat-message', (message) => {
-        const msg = new Message({message})
-        msg.save().then(() => {
-            socket.emit('chat-message', message) 
-            socket.broadcast.emit('chat-message', message)
-        })
-        // socket.emit('chat-message', message) // i will see msg i send
-        // socket.broadcast.emit('chat-message', message) // other people in chat will see msg
-    });
-
-    // io.on('connection', (socket) => {
-    //     socket.on('disconnect', () => {
-    //       console.log('user disconnected');
-    //     });
-
-    //     socket.broadcast.emit('user-connected', name)
-
-    // });
-
-
-    // socket.on('send name', (user) => {
-    //     io.emit('send name', user);
-    // });
- 
-    // socket.on('send message', (chat) => {
-    //     io.emit('send message', chat);
-    // });
-});
 
 async function startApp(){
     try{
@@ -80,6 +52,25 @@ async function startApp(){
     }
 }
 
-
+io.use(function(socket, next){
+    if (socket.handshake.query && socket.handshake.query.token){
+      jwt.verify(socket.handshake.query.token, secret, function(err, decoded) {
+        if (err) return next(new Error('Authentication error'));
+        socket.decoded = decoded;
+        next();
+      });
+    }
+    else {
+      next(new Error('Authentication error'));
+    }    
+  })
+  .on('connection', function(socket) {
+      // Connection now authenticated to receive further events
+  
+      socket.on('new-user', function(username) {
+          console.log('user token data', socket.decoded)
+          console.log('username', username)
+      });
+  });
 
 startApp();

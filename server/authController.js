@@ -36,7 +36,7 @@ class authController {
             const { username } = req.body;
             const user = await User.findOne({username});
             if(!user){
-                return res.status(400).json({message: `User ${username} is not find`})
+                return res.status(400).json({message: `User ${username} is not found`})
             } 
             const token = generateAccessToken(user._id, user.username);
             return res.json({token})
