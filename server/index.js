@@ -4,6 +4,7 @@ import authRouter from "./routers/authRouter.js";
 import { createServer } from "node:http";
 import { Server } from 'socket.io';
 import cors from 'cors';
+import Message from "./models/Message.js";
 
 
 const PORT = 5000;
@@ -16,28 +17,39 @@ const io = new Server(httpServer, {
       origin: '*',
     }
 });
-
+const corsHeaders = {
+    'Access-Control-Allow-Origin': "*",
+    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE',
+    'Access-Control-Allow-Headers': 'Content-Type'
+};
  
 app.use(express.json());
 app.use('/auth', authRouter);
 app.use(cors());
-app.use(allowCrossDomain);
+app.use(allowAnyCORS);
 
-function allowCrossDomain (req, res, next) {
-    res.header('Access-Control-Allow-Origin', "*");
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    req.header('Access-Control-Allow-Origin', "*");
-    req.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    req.header('Access-Control-Allow-Headers', 'Content-Type');
+function allowAnyCORS (req, res, next) {
+    for(let { header, value } in corsHeaders){
+        req.header(header, value);
+        res.header(header, value);
+    }
     next();
 }
+
+mongoose.connect(DB_URL, {useUnifiedTopology: true, useNewUrlParser: true}).then(() => {
+    console.log('connected')
+}).catch(err => console.log(err))
 
 io.on('connection', (socket) => {
 
     socket.on('send-chat-message', (message) => {
-        socket.emit('chat-message', message) // i will see msg i send
-        socket.broadcast.emit('chat-message', message) // other people in chat will see msg
+        const msg = new Message({message})
+        msg.save().then(() => {
+            socket.emit('chat-message', message) 
+            socket.broadcast.emit('chat-message', message)
+        })
+        // socket.emit('chat-message', message) // i will see msg i send
+        // socket.broadcast.emit('chat-message', message) // other people in chat will see msg
     });
 
     // io.on('connection', (socket) => {

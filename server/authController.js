@@ -1,5 +1,15 @@
 import User from "./models/User.js";
 import { validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
+import { secret } from "./config.js";
+
+const generateAccessToken = (id, username) => {
+    const payload = {
+        id,
+        username
+    }
+    return jwt.sign(payload, secret, {expiresIn: "12h"})
+}
 
 class authController {
     async register(req, res){
@@ -11,7 +21,7 @@ class authController {
             const { username } = req.body;
             const isUser = await User.findOne({username});
             if(isUser){
-                return res.status(400).json({message: 'This user is already register'})
+                return res.status(400).json({message: 'This user is already registered'})
             }
             const user = new User({username});
             await user.save();
@@ -28,6 +38,8 @@ class authController {
             if(!user){
                 return res.status(400).json({message: `User ${username} is not find`})
             } 
+            const token = generateAccessToken(user._id, user.username);
+            return res.json({token})
         } catch(e){
             res.status(400).json({message: 'Login erorr'});
         }
