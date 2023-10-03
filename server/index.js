@@ -63,14 +63,31 @@ io.use(function(socket, next){
     else {
       next(new Error('Authentication error'));
     }    
-  })
-  .on('connection', function(socket) {
-      // Connection now authenticated to receive further events
-  
-      socket.on('new-user', function(username) {
-          console.log('user token data', socket.decoded)
-          console.log('username', username)
-      });
-  });
+})
+.on('connection', function(socket) {  
+
+    socket.on('user', function(data) {
+        socket.emit('user-connected', socket.decoded.username)
+        console.log('user token data', socket.decoded)
+        console.log('Its data', data)
+    });
+
+    socket.on('send-chat-message', (message) => {
+        console.log('Received message:', message);
+        console.log('socket by', socket.decoded)
+        
+        const msg =  new Message({id:socket.decoded._id, username: socket.decoded.username, message: message });
+        msg.save() 
+        .then((result) => {
+            console.log('result is', result)
+        })
+        .catch((err) => {
+            console.log('err', err)
+        })
+    
+        // Broadcast the message to all connected clients
+        socket.emit('chat-message', socket.decoded);
+    })
+});
 
 startApp();

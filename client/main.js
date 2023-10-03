@@ -8,7 +8,6 @@ const loginContainer = document.getElementById('login-container');
 const chatContainer = document.getElementById('chat-container');
 const loginFrom = document.getElementById('login');
 const usernameEl = document.getElementById('username');
-let username = usernameEl.value;
 const msgFromMeClass = 'message--from-me';
 const msgSystemClass = 'message--system';
 
@@ -36,17 +35,22 @@ async function authenticate(username) {
 
 loginFrom.addEventListener('submit', e =>{
     e.preventDefault(); 
+    let username = usernameEl.value;
 
-    authenticate(usernameEl.value)
+    authenticate(username)
     .then((token) => {
-      console.log('JWT token:', token);
       socket = io ("http://localhost:5000", {
-            query: {token}
-        });
-      socket && socket.emit('new-user', usernameEl.value);
-    //   socket && socket.on('user-connected', username => {
-    //         console.log(socket, username)
-    //     });
+        query: {token}
+      });
+      socket && socket.emit('user', username);
+      console.log(username)
+      socket && socket.on('user-connected', data => {
+        console.log('connected', data)
+      });
+      socket.on('chat-message', ( data, message ) => {
+        console.log(data.message)
+      });
+      
       
     })
     .catch((error) => {
@@ -63,11 +67,11 @@ loginFrom.addEventListener('submit', e =>{
 });
 
 
-socket && socket.on('chat-message', data => {
-   const addingClass = username === data.username ? msgFromMeClass : '';
-   renderMessage(data.username, data.message, addingClass);
+// socket && socket.on('chat-message', data => {
+//    const addingClass = username === data.username ? msgFromMeClass : '';
+//    renderMessage(data.username, data.message, addingClass);
   
-});
+// });
 
 socket && socket.on('user-disconnected', username => {
     renderMessage('SYSTEM', `${username} disconnected`, msgSystemClass)
