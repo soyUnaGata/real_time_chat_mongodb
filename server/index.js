@@ -75,18 +75,18 @@ io.use(function(socket, next){
     socket.on('send-chat-message', (message) => {
         console.log('Received message:', message);
         console.log('socket by', socket.decoded)
-        
-        const msg =  new Message({id:socket.decoded._id, username: socket.decoded.username, message: message });
+
+        const msg =  new Message({ userId: socket.decoded.id, username: socket.decoded.username, message: message });
         msg.save() 
         .then((result) => {
-            console.log('result is', result)
+            socket.emit('chat-message', { username: socket.decoded.username, message: message });
         })
         .catch((err) => {
             console.log('err', err)
         })
     
         // Broadcast the message to all connected clients
-        socket.emit('chat-message', socket.decoded);
+        //socket.emit('chat-message', socket.decoded);
     })
 });
 
