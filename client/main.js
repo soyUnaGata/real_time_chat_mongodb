@@ -44,13 +44,14 @@ loginFrom.addEventListener('submit', e =>{
       });
       socket && socket.emit('user', username);
       console.log(username)
-      socket && socket.on('user-connected', data => {
+      socket.on('user-connected', data => {
         console.log('connected', data)
       });
-      socket.on('chat-message', ( data, message ) => {
-        console.log(data.message)
+      socket.on('chat-message', data => {
+        const addingClass = username === data.username ? msgFromMeClass : '';
+        renderMessage(data.username, data.message, addingClass);
+
       });
-      
       
     })
     .catch((error) => {
