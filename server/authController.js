@@ -2,6 +2,7 @@ import User from "./models/User.js";
 import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import { secret } from "./config.js";
+import bcrypt from "bcryptjs";
 
 const generateAccessToken = (id, username) => {
     const payload = {
@@ -18,14 +19,15 @@ class authController {
             if(!erorrs.isEmpty()){
                 return res.status(400).json({message: "Registration error", erorrs})
             }
-            const { username } = req.body;
+            const { username, password } = req.body;
             const isUser = await User.findOne({username});
             if(isUser){
                 return res.status(400).json({message: 'This user is already registered'})
             }
-            const user = new User({username});
+            const hashPassword = bcrypt.hashSync(password, 7);
+            const user = new User({username, password: hashPassword});
             await user.save();
-            return res.json({message: 'Registration was successful'});
+            return res.json({message: 'Registration is successful'});
         } catch(e){
             res.status(400).json({message: 'Something went wrong'});
         }
