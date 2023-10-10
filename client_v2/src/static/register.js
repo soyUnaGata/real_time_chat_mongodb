@@ -3,6 +3,7 @@ axios.defaults.baseURL = server;
 const usernameInput = document.getElementById('inputUsername');
 const passwordInput = document.getElementById('inputPassword');
 const registrationForm = document.getElementById('registration');
+const errorWrapper = document.getElementById('error-wrapper');
 
 
 registrationForm.addEventListener('submit', e => {
@@ -12,9 +13,20 @@ registrationForm.addEventListener('submit', e => {
 
     axios.post('auth/register', {username: username, password: password})
     .then(response => {
-        
+        socket.emit('user', username);
+        location = '/chat'
     })
-
+    .catch(error => {
+        errorWrapper.innerHTML = `
+        <div class="alert w-100 alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi danger-img" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/>
+                <div>
+                ${error.response.data.message}
+                </div>
+            </svg>
+        </div>
+        `
+    })
 
 })
 
