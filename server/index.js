@@ -65,21 +65,15 @@ io.use(function(socket, next){
     }    
 })
 .on('connection', function(socket) {  
+    console.log('con', socket.decoded.username)
+    socket.broadcast.emit('user-connected', socket.decoded.username);
 
-    socket.on('user', function(data) {
-        socket.emit('user-connected', socket.decoded.username)
-        console.log('user token data', socket.decoded)
-        console.log('Its data', data)
-    });
 
     socket.on('send-chat-message', (message) => {
-        console.log('Received message:', message);
-        console.log('socket by', socket.decoded)
-
         const msg =  new Message({ userId: socket.decoded.id, username: socket.decoded.username, message: message });
         msg.save() 
         .then((result) => {
-            socket.emit('chat-message', { username: socket.decoded.username, message: message });
+            socket.broadcast.emit('chat-message', { username: socket.decoded.username, message: message });
         })
         .catch((err) => {
             console.log('err', err)
@@ -87,7 +81,12 @@ io.use(function(socket, next){
     
         // Broadcast the message to all connected clients
         //socket.emit('chat-message', socket.decoded);
-    })
-});
+    });
+
+    socket.on('disconnect', function() {  
+        socket.broadcast.emit('user-disconnected', socket.decoded.username);
+    });
+
+})
 
 startApp();

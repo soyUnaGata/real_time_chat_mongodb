@@ -12,8 +12,8 @@ registrationForm.addEventListener('submit', e => {
     let password = passwordInput.value;
 
     axios.post('auth/register', {username: username, password: password})
-    .then(response => {
-        socket.emit('user', username);
+    .then((response) => {
+        localStorage.setItem('token', response.data.token);
         location = '/chat'
     })
     .catch(error => {

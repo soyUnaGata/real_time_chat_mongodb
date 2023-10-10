@@ -4,10 +4,11 @@ import jwt from "jsonwebtoken";
 import { secret } from "./config.js";
 import bcrypt from "bcryptjs";
 
-const generateAccessToken = (id, username) => {
+const generateAccessToken = (id, username, password) => {
     const payload = {
         id,
-        username
+        username, 
+        password
     }
     return jwt.sign(payload, secret, {expiresIn: "12h"})
 }
@@ -27,7 +28,9 @@ class authController {
             const hashPassword = bcrypt.hashSync(password, 7);
             const user = new User({username, password: hashPassword});
             await user.save();
-            return res.json({message: 'Registration is successful'});
+            // return res.json({message: 'Registration is successful'});
+            const token = generateAccessToken(user._id, user.username, user.password);
+            return res.json({token})
         } catch(e){
             res.status(400).json({message: 'Something went wrong'});
         }
