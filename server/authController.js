@@ -17,7 +17,7 @@ class authController {
         try{
             const erorrs = validationResult(req);
             if(!erorrs.isEmpty()){
-                return res.status(400).json({message: "Registration error", erorrs})
+                return res.status(400).json({message: "Username or password is not correct", erorrs})
             }
             const { username, password } = req.body;
             const isUser = await User.findOne({username});
