@@ -67,6 +67,7 @@ io.use(function(socket, next){
 .on('connection', function(socket) {  
     console.log('con', socket.decoded.username)
     socket.broadcast.emit('user-connected', socket.decoded.username);
+    socket.emit('user-connected', socket.decoded.username)
 
 
     socket.on('send-chat-message', (message) => {
@@ -74,6 +75,7 @@ io.use(function(socket, next){
         msg.save() 
         .then((result) => {
             socket.broadcast.emit('chat-message', { username: socket.decoded.username, message: message });
+            socket.emit('chat-message', { username: socket.decoded.username, message: message });
         })
         .catch((err) => {
             console.log('err', err)

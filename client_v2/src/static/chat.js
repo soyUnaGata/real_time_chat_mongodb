@@ -26,8 +26,9 @@ socket.on('user-connected', data => {
 });
 
 socket.on('chat-message', data => {
-    const addingClass = username === data ? msgFromMeClass : '';
-    renderMessage(data, data.message, addingClass);
+    console.log(data)
+    const addingClass = username === data.username ? msgFromMeClass : '';
+    renderMessage(data.username, data.message, addingClass);
 
 });
 
