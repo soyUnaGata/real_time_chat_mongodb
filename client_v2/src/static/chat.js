@@ -3,33 +3,43 @@ const token = localStorage.getItem('token');
 if (!token){
     location = '/register'
 }
+const server = 'http://localhost:5000';
+axios.defaults.baseURL = server;
+const msgFromMeClass = 'message--from-me';
+const msgSystemClass = 'message--system';
 
 const decoded = decodeJWT(token);
 const username = decoded.payload.username;
-const server = 'http://localhost:5000';
 const socket = io ("http://localhost:5000", {
     query: {token}
 });;
 
-axios.defaults.baseURL = server;
+axios.get('/msgs/getAll')
+    .then(resp => resp.data)
+    .then(messages =>{
+        for (const msg of messages) {
+            const addingClass = username === msg.username ? msgFromMeClass : '';
+            renderMessage(msg.username, msg.message, addingClass);
+        }
+    })
+
 
 const messageContainer = document.getElementById('message-container');
 const messageForm = document.getElementById('message-form');
 const messageInput = document.getElementById('message-input');
 const chatContainer = document.getElementById('chat-container');
 const usernameEl = document.getElementById('username');
-const msgFromMeClass = 'message--from-me';
-const msgSystemClass = 'message--system';
 
 socket.on('user-connected', data => {
     renderMessage('SYSTEM', `${data} connected`, msgSystemClass)
 });
 
-socket.on('chat-message', data => {
+socket.on('output-messages', data => {
     console.log(data)
-    const addingClass = username === data.username ? msgFromMeClass : '';
-    renderMessage(data.username, data.message, addingClass);
+})
 
+socket.on('chat-message', data => {
+    renderMessage(data.username, data.message, addingClass);
 });
 
 socket.on('user-disconnected', data => {

@@ -1,13 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routers/authRouter.js";
+import messageRouter from "./routers/messageRouter.js";
+
 import { createServer } from "node:http";
 import { Server } from 'socket.io';
 import cors from 'cors';
 import Message from "./models/Message.js";
 import { secret } from "./config.js";
-import User from "./models/User.js";
 import jwt from "jsonwebtoken";
+import msgController from "./msgController.js";
 
 
 const PORT = 5000;
@@ -28,6 +30,7 @@ const corsHeaders = {
  
 app.use(express.json());
 app.use('/auth', authRouter);
+app.use('/msgs', messageRouter);
 app.use(cors());
 app.use(allowAnyCORS);
 
@@ -65,7 +68,6 @@ io.use(function(socket, next){
     }    
 })
 .on('connection', function(socket) {  
-    console.log('con', socket.decoded.username)
     socket.broadcast.emit('user-connected', socket.decoded.username);
     socket.emit('user-connected', socket.decoded.username)
 
