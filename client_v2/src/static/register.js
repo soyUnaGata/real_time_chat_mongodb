@@ -19,11 +19,13 @@ registrationForm.addEventListener('submit', e => {
     .catch(error => {
         errorWrapper.innerHTML = `
         <div class="alert w-100 alert-danger d-flex align-items-center" role="alert">
-            <svg class="bi danger-img" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/>
-                <div>
-                ${error.response.data.message}
-                </div>
+            <svg class="bi danger-img" role="img" aria-label="Danger:">
+                <use xlink:href="#exclamation-triangle-fill"/>
             </svg>
+             
+            <div>
+                ${error.response.data.message}
+            </div>
         </div>
         `
     })
