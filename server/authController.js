@@ -28,7 +28,6 @@ class authController {
             const hashPassword = bcrypt.hashSync(password, 7);
             const user = new User({username, password: hashPassword});
             await user.save();
-            // return res.json({message: 'Registration is successful'});
             const token = generateAccessToken(user._id, user.username, user.password);
             return res.json({token})
         } catch(e){
@@ -38,12 +37,16 @@ class authController {
 
     async login(req, res){
         try{
-            const { username } = req.body;
+            const { username, password } = req.body;
             const user = await User.findOne({username});
             if(!user){
                 return res.status(400).json({message: `User ${username} is not found`})
             } 
-            const token = generateAccessToken(user._id, user.username);
+            const validPassword = bcrypt.compareSync(password, user.password);
+            if(!validPassword){
+                return res.status(400).json({message: `Password  is incorrect`})
+            }
+            const token = generateAccessToken(user._id, user.username,user.password);
             return res.json({token})
         } catch(e){
             res.status(400).json({message: 'Login erorr'});
