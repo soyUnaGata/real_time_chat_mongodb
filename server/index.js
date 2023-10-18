@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken";
 import msgController from "./controllers/msgController.js";
 
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const DB_URL = `mongodb+srv://fallensnitch:RqhyVoGBKO64vet6@clusterauth.ysmk2n9.mongodb.net/`;
 
 const app = express();
