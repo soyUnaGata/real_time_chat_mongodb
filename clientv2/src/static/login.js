@@ -14,7 +14,7 @@ loginForm.addEventListener('submit', e => {
     axios.post('auth/login', {username: username, password: password})
     .then((response) => {
         localStorage.setItem('token', response.data.token);
-        location = '/chat'
+        location = '/'
     })
     .catch(error => {
         errorWrapper.innerHTML = `
