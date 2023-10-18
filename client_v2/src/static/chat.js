@@ -39,6 +39,7 @@ socket.on('output-messages', data => {
 })
 
 socket.on('chat-message', data => {
+    const addingClass = username === data.username ? msgFromMeClass : '';
     renderMessage(data.username, data.message, addingClass);
 });
 
@@ -76,12 +77,12 @@ function base64UrlDecode(base64Url) {
     let padding = '='.repeat((4 - (base64Url.length % 4)) % 4);
     let base64 = (base64Url + padding).replace(/-/g, '+').replace(/_/g, '/');
     return atob(base64);
-  }
+}
   
-  function decodeJWT(token) {
-    const [headerEncoded, payloadEncoded, signature] = token.split('.');
-    const header = JSON.parse(base64UrlDecode(headerEncoded));
-    const payload = JSON.parse(base64UrlDecode(payloadEncoded));
-  
-    return { header, payload, signature };
-  }
+function decodeJWT(token) {
+const [headerEncoded, payloadEncoded, signature] = token.split('.');
+const header = JSON.parse(base64UrlDecode(headerEncoded));
+const payload = JSON.parse(base64UrlDecode(payloadEncoded));
+
+return { header, payload, signature };
+}
