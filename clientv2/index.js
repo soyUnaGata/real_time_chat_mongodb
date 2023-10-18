@@ -15,7 +15,7 @@ app.get('/register', (req, res) => {
   res.sendFile(srcDirname + '/register.html');
 });
 
-app.get('/chat', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(srcDirname + '/chat.html');
 });
 
