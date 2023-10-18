@@ -9,15 +9,34 @@
   </head>
 </head>
 <body>
-   <div id="login-container" class="container justify-content-center align-items-center">
-        <div class="login-wrapper w-100">
-            <form id="login" class="d-flex flex-column align-items-center w-100">
+ 
+    <div class="main-wrapper">
+     
+        <ul class="nav justify-content-end">
+            <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/register">Create an account</a>
+            </li>
+        </ul>
+
+        <div class="login-wrapper container d-flex flex-column justify-content-center align-items-center">
+            <form id="login"  class="row g-3">
                 <h2 class="hedline-login">Log In to Chat</h2>
-                <input id="username" class="form-control w-50" type="text">
-                <button class="btn btn-outline-info btn-lg w-50" type="submit">Log In</button>
+                <div class="col-8">
+                    <label for="username" class="form-label">Username</label>
+                    <input id="inputUsername" class="form-control" type="text">
+                </div>
+                <div class="col-8">
+                <label for="inputPassword4" class="form-label">Password</label>
+                <input id="inputPassword" class="form-control" type="password">
+                </div>
+                <div class="col-8 d-flex justify-content-center">
+                    <button class="btn btn-outline-info btn-lg w-50" type="submit">Log In</button>
+                </div>
             </form>
         </div>
-   </div>
+       
+    
+    </div>
 
     <script src="http://localhost:5000/socket.io/socket.io.js"></script>
     <script defer src="https://unpkg.com/axios/dist/axios.min.js"></script>
