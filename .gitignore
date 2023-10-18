@@ -1,4 +1,4 @@
 client/node_modules/*
-client_v2/node_modules/*
+clientv2/node_modules/*
 server/node_modules/*
 .vercel
