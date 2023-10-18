@@ -1,4 +1,4 @@
-const server = 'http://localhost:5000';
+const server = 'https://real-time-p8h4.onrender.com';
 axios.defaults.baseURL = server;
 const usernameInput = document.getElementById('inputUsername');
 const passwordInput = document.getElementById('inputPassword');

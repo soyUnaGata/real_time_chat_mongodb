@@ -3,14 +3,14 @@ const token = localStorage.getItem('token');
 if (!token){
     location = '/register'
 }
-const server = 'http://localhost:5000';
+const server = 'https://real-time-p8h4.onrender.com';
 axios.defaults.baseURL = server;
 const msgFromMeClass = 'message--from-me';
 const msgSystemClass = 'message--system';
 
 const decoded = decodeJWT(token);
 const username = decoded.payload.username;
-const socket = io ("http://localhost:5000", {
+const socket = io (server, {
     query: {token}
 });;
 
