@@ -9,7 +9,7 @@ import cors from 'cors';
 import Message from "./models/Message.js";
 import { secret } from "./config.js";
 import jwt from "jsonwebtoken";
-import msgController from "./msgController.js";
+import msgController from "./controllers/msgController.js";
 
 
 const PORT = 5000;
@@ -82,9 +82,6 @@ io.use(function(socket, next){
         .catch((err) => {
             console.log('err', err)
         })
-    
-        // Broadcast the message to all connected clients
-        //socket.emit('chat-message', socket.decoded);
     });
 
     socket.on('disconnect', function() {  

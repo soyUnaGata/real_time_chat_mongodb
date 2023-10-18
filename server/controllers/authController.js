@@ -1,7 +1,7 @@
-import User from "./models/User.js";
+import User from "../models/User.js";
 import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
-import { secret } from "./config.js";
+import { secret } from "../config.js";
 import bcrypt from "bcryptjs";
 
 const generateAccessToken = (id, username, password) => {
