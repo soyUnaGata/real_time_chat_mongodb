@@ -107,5 +107,3 @@ Contributions are welcome! If you find any issues or have improvements, feel fre
 License
 This project is licensed under the MIT License. See the LICENSE.md file for details.
 
-
-Please copy and paste this version into your GitHub README, and it should display with proper formatting.
